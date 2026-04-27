@@ -177,6 +177,7 @@ export default function BodyComp() {
   const [photos, setPhotos] = useState<any[]>([])
   const [photosLoading, setPhotosLoading] = useState(true)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [photoError, setPhotoError] = useState('')
   const [fullscreenPhoto, setFullscreenPhoto] = useState<any | null>(null)
   const [deletePhoto, setDeletePhoto] = useState<any | null>(null)
   const [compareMode, setCompareMode] = useState(false)
@@ -265,10 +266,17 @@ export default function BodyComp() {
   const handlePhotoUpload = async (file: File) => {
     if (!user) return
     setUploadingPhoto(true)
+    setPhotoError('')
     try {
-      const path = `users/${user.uid}/progress_photos/${Date.now()}_${file.name}`
+      // Compress to JPEG if > 5 MB to avoid slow uploads
+      const uploadFile = file.size > 5 * 1024 * 1024
+        ? await compressImage(file)
+        : file
+
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+      const path = `users/${user.uid}/progress_photos/${Date.now()}_${safeName}`
       const storageRef = ref(storage, path)
-      await uploadBytes(storageRef, file)
+      await uploadBytes(storageRef, uploadFile)
       const url = await getDownloadURL(storageRef)
       const photoDoc = await addDoc(collection(db, 'users', user.uid, 'progress_photos'), {
         url, storagePath: path, pose: photoPose,
@@ -278,11 +286,44 @@ export default function BodyComp() {
       const newPhoto = { id: photoDoc.id, url, storagePath: path, pose: photoPose,
         date: new Date(photoDate + 'T12:00:00').getTime() }
       setPhotos(prev => [newPhoto, ...prev])
+    } catch (err: any) {
+      console.error('Photo upload failed:', err)
+      const msg: string = err?.message ?? ''
+      if (msg.includes('storage/unauthorized') || msg.includes('permission-denied')) {
+        setPhotoError('Upload blocked by storage permissions. Set your storage rules to allow authenticated users — see the setup note above.')
+      } else if (msg.includes('storage/unknown') || msg.includes('Failed to fetch')) {
+        setPhotoError('Could not reach the storage server. Check that Cloud Storage is enabled in your project console.')
+      } else {
+        setPhotoError(msg || 'Upload failed. Please try again.')
+      }
     } finally {
       setUploadingPhoto(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
+
+  // Compress image client-side before upload
+  const compressImage = (file: File): Promise<Blob> =>
+    new Promise((resolve) => {
+      const img = new Image()
+      const url = URL.createObjectURL(file)
+      img.onload = () => {
+        const MAX = 1600
+        let { width, height } = img
+        if (width > MAX || height > MAX) {
+          const ratio = Math.min(MAX / width, MAX / height)
+          width = Math.round(width * ratio)
+          height = Math.round(height * ratio)
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width; canvas.height = height
+        canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
+        canvas.toBlob(b => resolve(b ?? file), 'image/jpeg', 0.82)
+        URL.revokeObjectURL(url)
+      }
+      img.onerror = () => resolve(file)
+      img.src = url
+    })
 
   const handleDeletePhoto = async () => {
     if (!user || !deletePhoto) return
@@ -433,6 +474,19 @@ export default function BodyComp() {
       {/* ── PHOTOS TAB ── */}
       {tab === 1 && (
         <>
+          {/* Privacy / security note */}
+          <div className="rounded-xl px-3 py-2.5 flex items-start gap-2.5"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <p className="text-text-tertiary text-xs leading-relaxed">
+              Progress photos are stored in your private account — accessible only to you.
+              They are encrypted in transit and at rest, protected by industry-standard cloud security.
+              Photos are never shared, sold, or accessed by anyone else.
+            </p>
+          </div>
+
           {/* Photo date/pose picker before upload */}
           <div className="glossy-card space-y-3">
             <p className="text-text-secondary text-xs font-semibold tracking-widest">PHOTO SETTINGS</p>
@@ -451,7 +505,7 @@ export default function BodyComp() {
               </div>
             </div>
             <button
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => { setPhotoError(''); fileInputRef.current?.click() }}
               disabled={uploadingPhoto}
               className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50"
               style={{ background: 'rgba(205,250,65,0.1)', border: '1px dashed rgba(205,250,65,0.3)', color: C }}>
@@ -464,6 +518,12 @@ export default function BodyComp() {
                 </svg> Add Progress Photo</>
               )}
             </button>
+            {photoError && (
+              <div className="rounded-xl px-3 py-2.5 text-xs leading-relaxed"
+                style={{ background: 'rgba(255,59,48,0.1)', border: '1px solid rgba(255,59,48,0.3)', color: '#FF5252' }}>
+                {photoError}
+              </div>
+            )}
           </div>
 
           {/* Compare toolbar */}

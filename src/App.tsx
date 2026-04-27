@@ -30,6 +30,14 @@ function AppContent() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
+      // Block unverified users — prevents the 1-second flash after signup
+      // where the user is signed in but hasn't verified their email yet.
+      // Auth.tsx handles signOut and the verify screen after signup.
+      if (u && !u.emailVerified) {
+        setUser(null)
+        setLoading(false)
+        return
+      }
       setUser(u)
       setLoading(false)
     })

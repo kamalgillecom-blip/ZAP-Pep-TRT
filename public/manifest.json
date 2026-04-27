@@ -1,0 +1,24 @@
+{
+  "name": "ZAP PEP/TRT Tracker",
+  "short_name": "PEP/TRT",
+  "description": "Track peptides, TRT, SARMs and more. Dose log, vials, pharmacokinetics, blood work & body comp.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0E14",
+  "theme_color": "#CDFA41",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

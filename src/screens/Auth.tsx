@@ -10,7 +10,7 @@ import { auth, db } from '../firebase'
 
 const C = '#CDFA41'
 
-type Screen = 'login' | 'signup' | 'verify' | 'reset'
+type Screen = 'login' | 'signup' | 'reset'
 
 export default function Auth() {
   const [screen, setScreen] = useState<Screen>('login')
@@ -19,46 +19,39 @@ export default function Auth() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [resetSent, setResetSent] = useState(false)
-  const [verifyEmail, setVerifyEmail] = useState('')
 
-  const cleanError = (msg: string) =>
-    msg.replace('Firebase: ', '').replace(/\(auth.*\)\.?/, '').trim()
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(''); setLoading(true)
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, password)
-      if (!cred.user.emailVerified) {
-        await sendEmailVerification(cred.user)
-        setVerifyEmail(email)
-        setScreen('verify')
-        await auth.signOut()
-      }
-      // if verified, onAuthStateChanged in App.tsx handles the redirect
-    } catch (err: any) {
-      setError(cleanError(err.message || 'Sign in failed'))
-    } finally {
-      setLoading(false)
-    }
+  const cleanError = (msg: string) => {
+    if (msg.includes('user-not-found') || msg.includes('wrong-password') || msg.includes('invalid-credential'))
+      return 'Invalid email or password.'
+    if (msg.includes('email-already-in-use')) return 'An account with this email already exists.'
+    if (msg.includes('weak-password')) return 'Password must be at least 6 characters.'
+    if (msg.includes('invalid-email')) return 'Please enter a valid email address.'
+    if (msg.includes('network-request-failed')) return 'No internet connection.'
+    return msg.replace('Firebase: ', '').replace(/\(auth.*\)\.?/, '').trim()
   }
 
+  // ── Signup — matches Android AuthService.signUp() exactly ──────────────────
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(''); setLoading(true)
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password)
-      // Store account creation time for trial tracking
-      await setDoc(doc(db, 'users', cred.user.uid, 'profile', 'data'), {
-        uid: cred.user.uid,
-        email,
-        createdAt: Date.now(),
-        trialStartedAt: Date.now(),
-      }, { merge: true })
-      await sendEmailVerification(cred.user)
-      setVerifyEmail(email)
-      setScreen('verify')
-      await auth.signOut()
+
+      // Send verification email — non-blocking, ignore errors (same as Android)
+      try { await sendEmailVerification(cred.user) } catch (_) {}
+
+      // Create Firestore profile with trial start (same as Android)
+      try {
+        await setDoc(doc(db, 'users', cred.user.uid, 'profile', 'data'), {
+          uid: cred.user.uid,
+          email,
+          createdAt: Date.now(),
+          trialStartedAt: Date.now(),
+          subscriptionStatus: 'trial',
+        }, { merge: true })
+      } catch (_) {}
+
+      // User is now signed in — onAuthStateChanged in App.tsx routes them to the app
     } catch (err: any) {
       setError(cleanError(err.message || 'Sign up failed'))
     } finally {
@@ -66,6 +59,21 @@ export default function Auth() {
     }
   }
 
+  // ── Login — same as Android: just sign in, no verification gate ────────────
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(''); setLoading(true)
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      // onAuthStateChanged in App.tsx handles routing
+    } catch (err: any) {
+      setError(cleanError(err.message || 'Sign in failed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ── Password reset ─────────────────────────────────────────────────────────
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(''); setLoading(true)
@@ -74,20 +82,6 @@ export default function Auth() {
       setResetSent(true)
     } catch (err: any) {
       setError(cleanError(err.message || 'Reset failed'))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const resendVerification = async () => {
-    setLoading(true)
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email || verifyEmail, password)
-      await sendEmailVerification(cred.user)
-      await auth.signOut()
-      setError('')
-    } catch {
-      setError('Could not resend — try signing in again')
     } finally {
       setLoading(false)
     }
@@ -103,45 +97,6 @@ export default function Auth() {
       </div>
 
       <div className="glossy-card w-full max-w-sm">
-
-        {/* ── EMAIL VERIFICATION SCREEN ── */}
-        {screen === 'verify' && (
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
-              style={{ background: 'rgba(205,250,65,0.1)' }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
-            </div>
-            <div>
-              <p className="text-text-primary font-semibold text-base">Check your email</p>
-              <p className="text-text-secondary text-sm mt-2 leading-relaxed">
-                We sent a verification link to<br />
-                <span style={{ color: C }} className="font-medium">{verifyEmail}</span>
-              </p>
-              <p className="text-text-tertiary text-xs mt-2">
-                Click the link in the email then come back and sign in.
-              </p>
-            </div>
-            {error && (
-              <p className="text-status-red text-xs bg-status-red/10 border border-status-red/30 rounded-lg px-3 py-2">{error}</p>
-            )}
-            <button
-              onClick={resendVerification}
-              disabled={loading}
-              className="w-full py-2.5 rounded-lg text-sm font-semibold disabled:opacity-50"
-              style={{ background: 'rgba(205,250,65,0.1)', color: C, border: '1px solid rgba(205,250,65,0.25)' }}>
-              {loading ? 'Sending...' : 'Resend verification email'}
-            </button>
-            <button
-              onClick={() => { setScreen('login'); setError('') }}
-              className="w-full py-2.5 rounded-lg text-sm font-semibold"
-              style={{ background: C, color: '#0A0E14' }}>
-              Back to Sign In
-            </button>
-          </div>
-        )}
 
         {/* ── PASSWORD RESET SCREEN ── */}
         {screen === 'reset' && (
@@ -217,22 +172,6 @@ export default function Auth() {
         {/* ── SIGNUP SCREEN ── */}
         {screen === 'signup' && (
           <div className="space-y-4">
-            {/* Trial callout */}
-            <div className="rounded-xl p-3 flex items-start gap-3"
-              style={{ background: 'rgba(205,250,65,0.07)', border: '1px solid rgba(205,250,65,0.2)' }}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background: 'rgba(205,250,65,0.15)' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs font-bold" style={{ color: C }}>7-day free trial</p>
-                <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
-                  Full access, no card required. Introductory pricing — sign up now before prices change.
-                </p>
-              </div>
-            </div>
             <h2 className="text-lg font-semibold text-text-primary">Create Account</h2>
             <form onSubmit={handleSignup} className="space-y-4">
               <div>
@@ -251,7 +190,7 @@ export default function Auth() {
               <button type="submit" disabled={loading}
                 className="w-full font-semibold py-2.5 rounded-lg text-sm disabled:opacity-50"
                 style={{ background: C, color: '#0A0E14' }}>
-                {loading ? 'Creating account...' : 'Start Free Trial'}
+                {loading ? 'Creating account...' : 'Create Account'}
               </button>
             </form>
             <div className="text-center pt-1">

@@ -22,6 +22,7 @@ import Plotter from './screens/Plotter'
 import ExerciseLogs from './screens/ExerciseLogs'
 import Paywall from './screens/Paywall'
 import PaymentSuccess from './screens/PaymentSuccess'
+import Settings from './screens/Settings'
 
 function AppContent() {
   const { user, loading, setUser, setLoading } = useStore()
@@ -91,6 +92,8 @@ function AppContent() {
             <Route path="/plotter" element={<Plotter />} />
             <Route path="/exercise" element={<ExerciseLogs />} />
             <Route path="/more" element={<More />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/subscribe" element={<Paywall daysLeft={subscription.daysLeft} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         )}

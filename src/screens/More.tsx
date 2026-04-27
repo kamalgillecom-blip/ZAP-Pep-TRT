@@ -97,7 +97,7 @@ export default function More() {
       <div className="text-center pt-2">
         <p className="text-text-tertiary text-xs">ZAP PEP/TRT Tracker • Web</p>
         <p className="text-text-tertiary text-xs mt-0.5">
-          <a href="mailto:support@zapanalytics.net" className="text-cyan-primary">support@zapanalytics.net</a>
+          <a href="mailto:support@zapanalytics.com" className="text-cyan-primary">support@zapanalytics.com</a>
         </p>
       </div>
     </div>

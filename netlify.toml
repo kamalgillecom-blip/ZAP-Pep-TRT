@@ -2,6 +2,16 @@
   command = "npm run build && cp -r landing dist/landing"
   publish = "dist"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Stripe webhook — must hit the function, not the SPA fallback
+[[redirects]]
+  from = "/.netlify/functions/stripe-webhook"
+  to   = "/.netlify/functions/stripe-webhook"
+  status = 200
+
 # SPA fallback — lets React Router handle all routes
 # Files that exist (landing/*, assets/*, etc.) are served directly first
 [[redirects]]

@@ -543,6 +543,7 @@ function DashboardInner() {
   const [showCompoundPicker, setShowCompoundPicker] = useState(false)
   const [hiddenCompounds, setHiddenCompounds] = useState<Set<string>>(new Set())
   const [showMockWarn, setShowMockWarn] = useState(false)
+  const [activeAttr, setActiveAttr] = useState('energyLevel')
 
   const { hasMockData, deleting, seedMockData, deleteMockData } = useMockData(user?.uid)
 
@@ -664,6 +665,39 @@ function DashboardInner() {
   const todayDoses = doseLogs.filter(l => toMs(l.dateTime) >= startOfDay(new Date()).getTime()).length
   const latestWeight = bodyComps[0]?.weightLbs
   const activeVials = vials.filter(v => v.isActive).length
+
+  const ATTR_OPTIONS = [
+    { key: 'energyLevel',          label: 'Energy',      color: '#FFD740' },
+    { key: 'sleepQuality',         label: 'Sleep',       color: '#7C4DFF' },
+    { key: 'libidoQuality',        label: 'Libido',      color: '#FF4081' },
+    { key: 'morningWood',          label: 'Morning Wood',color: '#00E5FF' },
+    { key: 'erectionQuality',      label: 'Erections',   color: '#69F0AE' },
+    { key: 'irritationAggression', label: 'Irritation',  color: '#FF6D00' },
+  ]
+
+  const attrChartData = useMemo(() => {
+    const key = activeAttr
+    const logsWithVal = [...doseLogs]
+      .filter(l => {
+        const v = (l as any)[key]
+        return typeof v === 'number' && v > 0
+      })
+      .sort((a, b) => toMs(a.dateTime) - toMs(b.dateTime))
+
+    // Group by calendar day, average values
+    const byDay: Record<string, { sum: number; count: number }> = {}
+    logsWithVal.forEach(l => {
+      const day = format(new Date(toMs(l.dateTime)), 'MMM d')
+      if (!byDay[day]) byDay[day] = { sum: 0, count: 0 }
+      byDay[day].sum += (l as any)[key]
+      byDay[day].count++
+    })
+
+    return Object.entries(byDay).map(([label, { sum, count }]) => ({
+      label,
+      value: Math.round((sum / count) * 10) / 10,
+    }))
+  }, [doseLogs, activeAttr])
 
   const CHART_TABS = ['Weekly Doses', 'Weight Trend', 'Attribute Trends']
 
@@ -881,9 +915,42 @@ function DashboardInner() {
                   <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
                 </div>
               )}
-              <div className="h-36 flex items-center justify-center">
-                <p className="text-text-tertiary text-sm text-center">Attribute trends appear here<br/>after logging post-dose attributes</p>
+              {/* Attribute selector */}
+              <div className="flex gap-1.5 flex-wrap mb-2">
+                {ATTR_OPTIONS.map(opt => (
+                  <button key={opt.key} onClick={() => setActiveAttr(opt.key)}
+                    className="px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
+                    style={{
+                      background: activeAttr === opt.key ? opt.color + '33' : 'rgba(255,255,255,0.05)',
+                      border: `1px solid ${activeAttr === opt.key ? opt.color : 'rgba(255,255,255,0.1)'}`,
+                      color: activeAttr === opt.key ? opt.color : TEXT_SECONDARY,
+                    }}>
+                    {opt.label}
+                  </button>
+                ))}
               </div>
+              {attrChartData.length >= 2 ? (
+                <AreaChartCanvas
+                  data={attrChartData}
+                  color={ATTR_OPTIONS.find(o => o.key === activeAttr)?.color ?? C}
+                  height={160}
+                  yLabel="/ 5"
+                />
+              ) : (
+                <div className="h-36 flex items-center justify-center">
+                  <p className="text-text-tertiary text-sm text-center">
+                    {attrChartData.length === 0
+                      ? 'Log post-dose attributes to see trends'
+                      : 'Need 2+ days of data'}
+                  </p>
+                </div>
+              )}
+              {/* Scale reminder */}
+              {attrChartData.length >= 2 && (
+                <p className="text-text-tertiary text-xs mt-1 text-right">
+                  Scale: 1 – 5 · {ATTR_OPTIONS.find(o => o.key === activeAttr)?.label}
+                </p>
+              )}
             </div>
           )}
         </div>

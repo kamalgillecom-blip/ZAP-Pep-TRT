@@ -1,28 +1,93 @@
 import { useState } from 'react'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+} from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
+import { auth, db } from '../firebase'
 
 const C = '#CDFA41'
 
+type Screen = 'login' | 'signup' | 'verify' | 'reset'
+
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true)
+  const [screen, setScreen] = useState<Screen>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [verifyEmail, setVerifyEmail] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const cleanError = (msg: string) =>
+    msg.replace('Firebase: ', '').replace(/\(auth.*\)\.?/, '').trim()
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+    setError(''); setLoading(true)
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password)
+      if (!cred.user.emailVerified) {
+        await sendEmailVerification(cred.user)
+        setVerifyEmail(email)
+        setScreen('verify')
+        await auth.signOut()
+      }
+      // if verified, onAuthStateChanged in App.tsx handles the redirect
+    } catch (err: any) {
+      setError(cleanError(err.message || 'Sign in failed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(''); setLoading(true)
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password)
+      // Store account creation time for trial tracking
+      await setDoc(doc(db, 'users', cred.user.uid, 'profile', 'data'), {
+        uid: cred.user.uid,
+        email,
+        createdAt: Date.now(),
+        trialStartedAt: Date.now(),
+      }, { merge: true })
+      await sendEmailVerification(cred.user)
+      setVerifyEmail(email)
+      setScreen('verify')
+      await auth.signOut()
+    } catch (err: any) {
+      setError(cleanError(err.message || 'Sign up failed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(''); setLoading(true)
+    try {
+      await sendPasswordResetEmail(auth, email)
+      setResetSent(true)
+    } catch (err: any) {
+      setError(cleanError(err.message || 'Reset failed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const resendVerification = async () => {
     setLoading(true)
     try {
-      if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password)
-      } else {
-        await createUserWithEmailAndPassword(auth, email, password)
-      }
-    } catch (err: any) {
-      setError(err.message?.replace('Firebase: ', '').replace(/\(auth.*\)\.?/, '') || 'Something went wrong')
+      const cred = await signInWithEmailAndPassword(auth, email || verifyEmail, password)
+      await sendEmailVerification(cred.user)
+      await auth.signOut()
+      setError('')
+    } catch {
+      setError('Could not resend — try signing in again')
     } finally {
       setLoading(false)
     }
@@ -30,66 +95,173 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: '#0A0E14' }}>
-      {/* Logo */}
       <div className="mb-8 text-center">
-        <img src="/logo.png" alt="ZAP" className="w-24 h-24 mx-auto mb-4 rounded-2xl" style={{ filter: 'drop-shadow(0 0 20px rgba(205,250,65,0.4))' }} />
+        <img src="/logo.png" alt="ZAP" className="w-24 h-24 mx-auto mb-4 rounded-2xl"
+          style={{ filter: 'drop-shadow(0 0 20px rgba(205,250,65,0.4))' }} />
         <h1 className="text-2xl font-bold" style={{ color: C }}>ZAP PEP/TRT Tracker</h1>
         <p className="text-text-tertiary text-sm mt-1">Track your peptide &amp; TRT protocols</p>
       </div>
 
-      {/* Card */}
       <div className="glossy-card w-full max-w-sm">
-        <h2 className="text-lg font-semibold text-text-primary mb-6">
-          {isLogin ? 'Sign In' : 'Create Account'}
-        </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs text-text-secondary mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="w-full bg-dark-variant border border-dark-border rounded-lg px-3 py-2.5 text-text-primary text-sm focus:border-cyan-primary transition-colors"
-              placeholder="you@example.com"
-              required
-            />
+        {/* ── EMAIL VERIFICATION SCREEN ── */}
+        {screen === 'verify' && (
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
+              style={{ background: 'rgba(205,250,65,0.1)' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-text-primary font-semibold text-base">Check your email</p>
+              <p className="text-text-secondary text-sm mt-2 leading-relaxed">
+                We sent a verification link to<br />
+                <span style={{ color: C }} className="font-medium">{verifyEmail}</span>
+              </p>
+              <p className="text-text-tertiary text-xs mt-2">
+                Click the link in the email then come back and sign in.
+              </p>
+            </div>
+            {error && (
+              <p className="text-status-red text-xs bg-status-red/10 border border-status-red/30 rounded-lg px-3 py-2">{error}</p>
+            )}
+            <button
+              onClick={resendVerification}
+              disabled={loading}
+              className="w-full py-2.5 rounded-lg text-sm font-semibold disabled:opacity-50"
+              style={{ background: 'rgba(205,250,65,0.1)', color: C, border: '1px solid rgba(205,250,65,0.25)' }}>
+              {loading ? 'Sending...' : 'Resend verification email'}
+            </button>
+            <button
+              onClick={() => { setScreen('login'); setError('') }}
+              className="w-full py-2.5 rounded-lg text-sm font-semibold"
+              style={{ background: C, color: '#0A0E14' }}>
+              Back to Sign In
+            </button>
           </div>
-          <div>
-            <label className="block text-xs text-text-secondary mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full bg-dark-variant border border-dark-border rounded-lg px-3 py-2.5 text-text-primary text-sm focus:border-cyan-primary transition-colors"
-              placeholder="••••••••"
-              required
-              minLength={6}
-            />
+        )}
+
+        {/* ── PASSWORD RESET SCREEN ── */}
+        {screen === 'reset' && (
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold text-text-primary mb-1">Reset password</h2>
+              <p className="text-text-secondary text-sm">Enter your email and we'll send a reset link.</p>
+            </div>
+            {resetSent ? (
+              <div className="text-center space-y-3">
+                <p className="text-sm" style={{ color: C }}>Reset email sent! Check your inbox.</p>
+                <button onClick={() => { setScreen('login'); setResetSent(false) }}
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold"
+                  style={{ background: C, color: '#0A0E14' }}>Back to Sign In</button>
+              </div>
+            ) : (
+              <form onSubmit={handleReset} className="space-y-4">
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  className="w-full bg-dark-variant border border-dark-border rounded-lg px-3 py-2.5 text-text-primary text-sm focus:border-cyan-primary"
+                  placeholder="you@example.com" required />
+                {error && <p className="text-status-red text-xs bg-status-red/10 border border-status-red/30 rounded-lg px-3 py-2">{error}</p>}
+                <button type="submit" disabled={loading}
+                  className="w-full font-semibold py-2.5 rounded-lg text-sm disabled:opacity-50"
+                  style={{ background: C, color: '#0A0E14' }}>
+                  {loading ? 'Sending...' : 'Send reset link'}
+                </button>
+                <button type="button" onClick={() => { setScreen('login'); setError('') }}
+                  className="w-full text-sm text-center" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Back to Sign In
+                </button>
+              </form>
+            )}
           </div>
+        )}
 
-          {error && (
-            <p className="text-status-red text-xs bg-status-red/10 border border-status-red/30 rounded-lg px-3 py-2">{error}</p>
-          )}
+        {/* ── LOGIN SCREEN ── */}
+        {screen === 'login' && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-text-primary">Sign In</h2>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">Email</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  className="w-full bg-dark-variant border border-dark-border rounded-lg px-3 py-2.5 text-text-primary text-sm focus:border-cyan-primary"
+                  placeholder="you@example.com" required />
+              </div>
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">Password</label>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                  className="w-full bg-dark-variant border border-dark-border rounded-lg px-3 py-2.5 text-text-primary text-sm focus:border-cyan-primary"
+                  placeholder="••••••••" required minLength={6} />
+              </div>
+              {error && <p className="text-status-red text-xs bg-status-red/10 border border-status-red/30 rounded-lg px-3 py-2">{error}</p>}
+              <button type="submit" disabled={loading}
+                className="w-full font-semibold py-2.5 rounded-lg text-sm disabled:opacity-50"
+                style={{ background: C, color: '#0A0E14' }}>
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
+            <div className="flex items-center justify-between pt-1">
+              <button onClick={() => { setScreen('reset'); setError('') }}
+                className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                Forgot password?
+              </button>
+              <button onClick={() => { setScreen('signup'); setError('') }}
+                className="text-sm font-medium" style={{ color: C }}>
+                Create account
+              </button>
+            </div>
+          </div>
+        )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full font-semibold py-2.5 rounded-lg text-sm disabled:opacity-50 active:scale-95 transition-transform"
-            style={{ background: C, color: '#0A0E14' }}
-          >
-            {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
-          </button>
-        </form>
-
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => { setIsLogin(!isLogin); setError('') }}
-            className="text-sm" style={{ color: C }}
-          >
-            {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-          </button>
-        </div>
+        {/* ── SIGNUP SCREEN ── */}
+        {screen === 'signup' && (
+          <div className="space-y-4">
+            {/* Trial callout */}
+            <div className="rounded-xl p-3 flex items-start gap-3"
+              style={{ background: 'rgba(205,250,65,0.07)', border: '1px solid rgba(205,250,65,0.2)' }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(205,250,65,0.15)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold" style={{ color: C }}>7-day free trial</p>
+                <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
+                  Full access, no card required. Introductory pricing — sign up now before prices change.
+                </p>
+              </div>
+            </div>
+            <h2 className="text-lg font-semibold text-text-primary">Create Account</h2>
+            <form onSubmit={handleSignup} className="space-y-4">
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">Email</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  className="w-full bg-dark-variant border border-dark-border rounded-lg px-3 py-2.5 text-text-primary text-sm focus:border-cyan-primary"
+                  placeholder="you@example.com" required />
+              </div>
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">Password</label>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                  className="w-full bg-dark-variant border border-dark-border rounded-lg px-3 py-2.5 text-text-primary text-sm focus:border-cyan-primary"
+                  placeholder="Min. 6 characters" required minLength={6} />
+              </div>
+              {error && <p className="text-status-red text-xs bg-status-red/10 border border-status-red/30 rounded-lg px-3 py-2">{error}</p>}
+              <button type="submit" disabled={loading}
+                className="w-full font-semibold py-2.5 rounded-lg text-sm disabled:opacity-50"
+                style={{ background: C, color: '#0A0E14' }}>
+                {loading ? 'Creating account...' : 'Start Free Trial'}
+              </button>
+            </form>
+            <div className="text-center pt-1">
+              <button onClick={() => { setScreen('login'); setError('') }}
+                className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Already have an account? <span style={{ color: C }}>Sign in</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <p className="mt-6 text-text-tertiary text-xs text-center max-w-xs">

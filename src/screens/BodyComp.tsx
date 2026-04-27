@@ -586,10 +586,14 @@ export default function BodyComp() {
                         style={{ background: C }}>{selectIdx + 1}</div>
                     )}
                     {/* Info overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5"
-                      style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.75))' }}>
-                      <p className="text-white text-xs font-medium">{photo.pose}</p>
-                      <p className="text-white/60 text-xs">{format(new Date(photo.date), 'MMM d, yyyy')}</p>
+                    <div className="absolute bottom-0 left-0 right-0 px-2 py-2"
+                      style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.88))' }}>
+                      <p className="text-white text-xs font-bold leading-tight">
+                        {photo.pose || '—'}
+                      </p>
+                      <p className="text-white/70 text-xs leading-tight mt-0.5">
+                        {photo.date ? (() => { try { return format(new Date(toMs(photo.date)), 'MMM d, yyyy') } catch { return '—' } })() : '—'}
+                      </p>
                     </div>
                     {/* Delete button (non-compare mode) */}
                     {!compareMode && (
@@ -628,8 +632,10 @@ export default function BodyComp() {
             </button>
           </div>
           <div className="absolute bottom-0 left-0 right-0 p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
-            <p className="text-white font-semibold">{fullscreenPhoto.pose}</p>
-            <p className="text-white/60 text-sm">{format(new Date(fullscreenPhoto.date), 'MMMM d, yyyy')}</p>
+            <p className="text-white font-semibold">{fullscreenPhoto.pose || '—'}</p>
+            <p className="text-white/60 text-sm">
+              {fullscreenPhoto.date ? (() => { try { return format(new Date(toMs(fullscreenPhoto.date)), 'MMMM d, yyyy') } catch { return '—' } })() : '—'}
+            </p>
           </div>
         </div>
       )}

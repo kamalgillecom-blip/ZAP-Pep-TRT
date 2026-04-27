@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { collection, addDoc, setDoc, doc, getDocs, query, where, writeBatch } from 'firebase/firestore'
+import { collection, addDoc, doc, getDocs, query, where, writeBatch } from 'firebase/firestore'
 import { db } from '../firebase'
 import { MOCK_VIALS, MOCK_DOSE_LOGS, MOCK_BODY_COMPS, MOCK_EXERCISE_LOGS } from './mockData'
 

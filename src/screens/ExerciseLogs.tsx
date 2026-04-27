@@ -155,7 +155,7 @@ function WheelPicker({
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const itemsRef = useRef<(HTMLDivElement | null)[]>([])
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const readIdx = (el: HTMLDivElement) =>
     Math.max(0, Math.min(Math.round(el.scrollTop / ITEM_H), options.length - 1))

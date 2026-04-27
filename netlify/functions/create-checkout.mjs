@@ -43,8 +43,8 @@ export const handler = async (event) => {
       line_items: [{ price: priceId, quantity: 1 }],
       customer_email: email,
       metadata: { uid },
-      success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/`,
+      success_url: `${origin}/app/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/app`,
       subscription_data: {
         metadata: { uid },
       },

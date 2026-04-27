@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build && cp -r landing dist/landing"
+  publish = "dist"
+
+# SPA fallback — lets React Router handle all routes
+# Files that exist (landing/*, assets/*, etc.) are served directly first
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { collection, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
-import { db, storage } from '../firebase'
+import { collection, addDoc, deleteDoc, doc, updateDoc, getDocs, query, orderBy } from 'firebase/firestore'
+import { db } from '../firebase'
 import { useStore } from '../store/useStore'
 import { format } from 'date-fns'
 import { CYAN_PRIMARY } from '../lib/theme'
@@ -190,14 +189,12 @@ export default function BodyComp() {
   // Load progress photos
   useEffect(() => {
     if (!user) return
-    import('firebase/firestore').then(({ collection, getDocs, query, orderBy }) => {
-      getDocs(query(collection(db, 'users', user.uid, 'progress_photos'), orderBy('date', 'desc')))
-        .then(snap => {
-          setPhotos(snap.docs.map(d => ({ id: d.id, ...d.data() })))
-          setPhotosLoading(false)
-        })
-        .catch(() => setPhotosLoading(false))
-    })
+    getDocs(query(collection(db, 'users', user.uid, 'progress_photos'), orderBy('date', 'desc')))
+      .then(snap => {
+        setPhotos(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+        setPhotosLoading(false)
+      })
+      .catch(() => setPhotosLoading(false))
   }, [user])
 
   const weightData = [...bodyComps].slice(0, 30).reverse()
@@ -262,53 +259,14 @@ export default function BodyComp() {
     setDeleteComp(null)
   }
 
-  // ── Upload photo ──────────────────────────────────────────────────────────
-  const handlePhotoUpload = async (file: File) => {
-    if (!user) return
-    setUploadingPhoto(true)
-    setPhotoError('')
-    try {
-      // Compress to JPEG if > 5 MB to avoid slow uploads
-      const uploadFile = file.size > 5 * 1024 * 1024
-        ? await compressImage(file)
-        : file
-
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-      const path = `users/${user.uid}/progress_photos/${Date.now()}_${safeName}`
-      const storageRef = ref(storage, path)
-      await uploadBytes(storageRef, uploadFile)
-      const url = await getDownloadURL(storageRef)
-      const photoDoc = await addDoc(collection(db, 'users', user.uid, 'progress_photos'), {
-        url, storagePath: path, pose: photoPose,
-        date: new Date(photoDate + 'T12:00:00').getTime(),
-        userId: user.uid, createdAt: Date.now(),
-      })
-      const newPhoto = { id: photoDoc.id, url, storagePath: path, pose: photoPose,
-        date: new Date(photoDate + 'T12:00:00').getTime() }
-      setPhotos(prev => [newPhoto, ...prev])
-    } catch (err: any) {
-      console.error('Photo upload failed:', err)
-      const msg: string = err?.message ?? ''
-      if (msg.includes('storage/unauthorized') || msg.includes('permission-denied')) {
-        setPhotoError('Upload blocked by storage permissions. Set your storage rules to allow authenticated users — see the setup note above.')
-      } else if (msg.includes('storage/unknown') || msg.includes('Failed to fetch')) {
-        setPhotoError('Could not reach the storage server. Check that Cloud Storage is enabled in your project console.')
-      } else {
-        setPhotoError(msg || 'Upload failed. Please try again.')
-      }
-    } finally {
-      setUploadingPhoto(false)
-      if (fileInputRef.current) fileInputRef.current.value = ''
-    }
-  }
-
-  // Compress image client-side before upload
-  const compressImage = (file: File): Promise<Blob> =>
-    new Promise((resolve) => {
+  // ── Compress image to base64 (stays within Firestore 1MB doc limit) ─────────
+  const toBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
       const img = new Image()
-      const url = URL.createObjectURL(file)
+      const objectUrl = URL.createObjectURL(file)
       img.onload = () => {
-        const MAX = 1600
+        // Max dimension 1080px — keeps base64 well under 700 KB
+        const MAX = 1080
         let { width, height } = img
         if (width > MAX || height > MAX) {
           const ratio = Math.min(MAX / width, MAX / height)
@@ -318,22 +276,55 @@ export default function BodyComp() {
         const canvas = document.createElement('canvas')
         canvas.width = width; canvas.height = height
         canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
-        canvas.toBlob(b => resolve(b ?? file), 'image/jpeg', 0.82)
-        URL.revokeObjectURL(url)
+        URL.revokeObjectURL(objectUrl)
+        resolve(canvas.toDataURL('image/jpeg', 0.75))
       }
-      img.onerror = () => resolve(file)
-      img.src = url
+      img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error('Could not read image')) }
+      img.src = objectUrl
     })
+
+  // ── Upload photo (stored as base64 in database — no file storage needed) ──
+  const handlePhotoUpload = async (file: File) => {
+    if (!user) return
+    setUploadingPhoto(true)
+    setPhotoError('')
+    try {
+      const base64 = await toBase64(file)
+
+      // Firestore documents max 1 MB — warn if somehow still too large
+      if (base64.length > 900_000) {
+        setPhotoError('Image is too large even after compression. Try a smaller photo.')
+        return
+      }
+
+      const photoDoc = await addDoc(collection(db, 'users', user.uid, 'progress_photos'), {
+        base64,
+        pose: photoPose,
+        date: new Date(photoDate + 'T12:00:00').getTime(),
+        userId: user.uid,
+        createdAt: Date.now(),
+      })
+      setPhotos(prev => [{
+        id: photoDoc.id, base64, pose: photoPose,
+        date: new Date(photoDate + 'T12:00:00').getTime(),
+      }, ...prev])
+    } catch (err: any) {
+      console.error('Photo save failed:', err)
+      setPhotoError(err?.message || 'Failed to save photo. Please try again.')
+    } finally {
+      setUploadingPhoto(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   const handleDeletePhoto = async () => {
     if (!user || !deletePhoto) return
     try {
-      if (deletePhoto.storagePath) await deleteObject(ref(storage, deletePhoto.storagePath))
       await deleteDoc(doc(db, 'users', user.uid, 'progress_photos', deletePhoto.id))
       setPhotos(prev => prev.filter(p => p.id !== deletePhoto.id))
-      setDeletePhoto(null)
       if (fullscreenPhoto?.id === deletePhoto.id) setFullscreenPhoto(null)
-    } catch { setDeletePhoto(null) }
+    } catch { }
+    setDeletePhoto(null)
   }
 
   const toggleCompareSelect = (photo: any) => {
@@ -481,9 +472,9 @@ export default function BodyComp() {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
             <p className="text-text-tertiary text-xs leading-relaxed">
-              Progress photos are stored in your private account — accessible only to you.
-              They are encrypted in transit and at rest, protected by industry-standard cloud security.
-              Photos are never shared, sold, or accessed by anyone else.
+              Progress photos are compressed and stored directly in your private account database,
+              accessible only to you. All data is encrypted in transit and at rest using
+              industry-standard security. Your photos are never shared, sold, or accessed by anyone else.
             </p>
           </div>
 
@@ -588,7 +579,7 @@ export default function BodyComp() {
                       boxShadow: isSelected ? `0 0 12px rgba(205,250,65,0.3)` : 'none',
                     }}
                     onClick={() => compareMode ? toggleCompareSelect(photo) : setFullscreenPhoto(photo)}>
-                    <img src={photo.url} className="w-full h-full object-cover" />
+                    <img src={photo.base64 || photo.url} className="w-full h-full object-cover" />
                     {/* Compare badge */}
                     {isSelected && (
                       <div className="absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-black"
@@ -622,7 +613,7 @@ export default function BodyComp() {
       {/* ── FULLSCREEN PHOTO VIEWER ── */}
       {fullscreenPhoto && (
         <div className="fixed inset-0 bg-black z-[100] flex flex-col" onClick={() => setFullscreenPhoto(null)}>
-          <img src={fullscreenPhoto.url} className="flex-1 object-contain w-full" onClick={e => e.stopPropagation()} />
+          <img src={fullscreenPhoto.base64 || fullscreenPhoto.url} className="flex-1 object-contain w-full" onClick={e => e.stopPropagation()} />
           <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4">
             <button
               onClick={e => { e.stopPropagation(); setDeletePhoto(fullscreenPhoto); setFullscreenPhoto(null) }}
@@ -646,8 +637,8 @@ export default function BodyComp() {
       {/* ── BEFORE/AFTER SLIDER ── */}
       {showCompare && compareSelected.length === 2 && (
         <CompareSlider
-          photoA={compareSelected[0].url}
-          photoB={compareSelected[1].url}
+          photoA={compareSelected[0].base64 || compareSelected[0].url}
+          photoB={compareSelected[1].base64 || compareSelected[1].url}
           labelA={format(new Date(compareSelected[0].date), 'MMM d, yyyy')}
           labelB={format(new Date(compareSelected[1].date), 'MMM d, yyyy')}
           onClose={() => { setShowCompare(false); setCompareMode(false); setCompareSelected([]) }}

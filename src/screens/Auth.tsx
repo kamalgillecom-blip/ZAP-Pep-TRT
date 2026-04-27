@@ -10,7 +10,7 @@ import { auth, db } from '../firebase'
 
 const C = '#CDFA41'
 
-type Screen = 'login' | 'signup' | 'reset'
+type Screen = 'login' | 'signup' | 'verify' | 'reset'
 
 export default function Auth() {
   const [screen, setScreen] = useState<Screen>('login')
@@ -19,6 +19,7 @@ export default function Auth() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [verifyEmail, setVerifyEmail] = useState('')
 
   const cleanError = (msg: string) => {
     if (msg.includes('user-not-found') || msg.includes('wrong-password') || msg.includes('invalid-credential'))
@@ -27,20 +28,18 @@ export default function Auth() {
     if (msg.includes('weak-password')) return 'Password must be at least 6 characters.'
     if (msg.includes('invalid-email')) return 'Please enter a valid email address.'
     if (msg.includes('network-request-failed')) return 'No internet connection.'
+    if (msg.includes('too-many-requests')) return 'Too many attempts. Please try again later.'
     return msg.replace('Firebase: ', '').replace(/\(auth.*\)\.?/, '').trim()
   }
 
-  // ── Signup — matches Android AuthService.signUp() exactly ──────────────────
+  // ── Signup ─────────────────────────────────────────────────────────────────
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(''); setLoading(true)
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password)
 
-      // Send verification email — non-blocking, ignore errors (same as Android)
-      try { await sendEmailVerification(cred.user) } catch (_) {}
-
-      // Create Firestore profile with trial start (same as Android)
+      // Store profile with trial start time
       try {
         await setDoc(doc(db, 'users', cred.user.uid, 'profile', 'data'), {
           uid: cred.user.uid,
@@ -51,7 +50,14 @@ export default function Auth() {
         }, { merge: true })
       } catch (_) {}
 
-      // User is now signed in — onAuthStateChanged in App.tsx routes them to the app
+      // Send verification email
+      await sendEmailVerification(cred.user)
+
+      // Sign out — user must verify before they can sign in
+      await auth.signOut()
+
+      setVerifyEmail(email)
+      setScreen('verify')
     } catch (err: any) {
       setError(cleanError(err.message || 'Sign up failed'))
     } finally {
@@ -59,15 +65,36 @@ export default function Auth() {
     }
   }
 
-  // ── Login — same as Android: just sign in, no verification gate ────────────
+  // ── Login ──────────────────────────────────────────────────────────────────
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(''); setLoading(true)
     try {
-      await signInWithEmailAndPassword(auth, email, password)
-      // onAuthStateChanged in App.tsx handles routing
+      const cred = await signInWithEmailAndPassword(auth, email, password)
+      if (!cred.user.emailVerified) {
+        // Resend verification and block entry
+        await sendEmailVerification(cred.user)
+        await auth.signOut()
+        setVerifyEmail(email)
+        setScreen('verify')
+      }
+      // If verified, onAuthStateChanged in App.tsx handles routing
     } catch (err: any) {
       setError(cleanError(err.message || 'Sign in failed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ── Resend verification ────────────────────────────────────────────────────
+  const resendVerification = async () => {
+    setLoading(true); setError('')
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email || verifyEmail, password)
+      await sendEmailVerification(cred.user)
+      await auth.signOut()
+    } catch {
+      setError('Could not resend — try signing in again')
     } finally {
       setLoading(false)
     }
@@ -97,6 +124,42 @@ export default function Auth() {
       </div>
 
       <div className="glossy-card w-full max-w-sm">
+
+        {/* ── EMAIL VERIFICATION SCREEN ── */}
+        {screen === 'verify' && (
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
+              style={{ background: 'rgba(205,250,65,0.1)' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-text-primary font-semibold text-base">Check your email</p>
+              <p className="text-text-secondary text-sm mt-2 leading-relaxed">
+                We sent a verification link to<br />
+                <span style={{ color: C }} className="font-medium">{verifyEmail}</span>
+              </p>
+              <p className="text-text-tertiary text-xs mt-2">
+                Click the link in the email, then come back and sign in.
+              </p>
+            </div>
+            {error && (
+              <p className="text-status-red text-xs bg-status-red/10 border border-status-red/30 rounded-lg px-3 py-2">{error}</p>
+            )}
+            <button onClick={resendVerification} disabled={loading}
+              className="w-full py-2.5 rounded-lg text-sm font-semibold disabled:opacity-50"
+              style={{ background: 'rgba(205,250,65,0.1)', color: C, border: '1px solid rgba(205,250,65,0.25)' }}>
+              {loading ? 'Sending...' : 'Resend verification email'}
+            </button>
+            <button onClick={() => { setScreen('login'); setError('') }}
+              className="w-full py-2.5 rounded-lg text-sm font-semibold"
+              style={{ background: C, color: '#0A0E14' }}>
+              Back to Sign In
+            </button>
+          </div>
+        )}
 
         {/* ── PASSWORD RESET SCREEN ── */}
         {screen === 'reset' && (

@@ -99,7 +99,7 @@ export default function Schedules() {
         {schedules.map(s => (
           <div key={s.id} className="glossy-card">
             <div className="flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: s.vialColor || '#CDFA41' }} />
+              <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: s.vialColor || '#C4EF95' }} />
               <div className="flex-1 min-w-0">
                 <p className="text-text-primary font-semibold text-sm">{s.compoundName}</p>
                 <p className="text-cyan-light text-xs">{s.doseValue} {s.doseUnit} at {s.timeOfDay}</p>

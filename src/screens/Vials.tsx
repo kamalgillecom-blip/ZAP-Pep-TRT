@@ -206,7 +206,7 @@ function VialCard({ vial, onDelete, onToggle }: { vial: any; onDelete: (id: stri
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
           <div className="w-3 h-10 rounded-full flex-shrink-0 relative overflow-hidden bg-dark-border">
-            <div className="absolute bottom-0 left-0 right-0 rounded-full transition-all" style={{ height: `${pct}%`, background: vial.color || '#CDFA41' }} />
+            <div className="absolute bottom-0 left-0 right-0 rounded-full transition-all" style={{ height: `${pct}%`, background: vial.color || '#C4EF95' }} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-text-primary font-semibold text-sm">{vial.compoundName}</p>
@@ -236,7 +236,7 @@ function VialCard({ vial, onDelete, onToggle }: { vial: any; onDelete: (id: stri
 
       {/* Progress bar */}
       <div className="mt-3 bg-dark-border rounded-full h-1.5 overflow-hidden">
-        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: vial.color || '#CDFA41' }} />
+        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: vial.color || '#C4EF95' }} />
       </div>
     </div>
   )

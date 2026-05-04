@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Peptide Calculator — ZAP Peptides & TRT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=3">
+  <style>
+    /* Calculator Specific Styles */
+    .calc-container {
+      max-width: 600px;
+      margin: 100px auto 40px auto;
+      padding: 30px;
+      background: #111116;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .calc-container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #00f0ff, #0088ff);
+    }
+
+    .calc-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .calc-header h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      background: linear-gradient(to right, #ffffff, #a0a0b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .calc-header p {
+      color: #888;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #a0a0b0;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      background: #1a1a22;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: #00f0ff;
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15);
+    }
+
+    .input-wrapper .unit {
+      position: absolute;
+      right: 16px;
+      color: #555;
+      font-size: 14px;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .result-box {
+      margin-top: 40px;
+      background: linear-gradient(145deg, #0a192f, #020c1b);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.05);
+    }
+
+    .result-box::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px; bottom: -1px;
+      border-radius: 16px;
+      background: linear-gradient(45deg, #00f0ff, transparent, #0088ff);
+      z-index: -1;
+      opacity: 0.5;
+      filter: blur(8px);
+    }
+
+    .result-label {
+      color: #00f0ff;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 48px;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      margin-bottom: 8px;
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    }
+
+    .result-subtext {
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* Embedded mode overrides */
+    body.is-embedded .nav,
+    body.is-embedded .footer {
+      display: none !important;
+    }
+    body.is-embedded .calc-container {
+      margin: 20px auto;
+      border: none;
+      box-shadow: none;
+      background: transparent;
+    }
+    body.is-embedded {
+      background: #0d0d12;
+      min-height: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== NAV ========== -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo">
+          <img src="assets/logo.png" alt="Peptides & TRT Zap" />
+        </span>
+        <span class="brand-name"><b>ZAP</b> Peptides &amp; TRT</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#scroll">Dashboard</a>
+        <a href="index.html#compounds">Compounds</a>
+        <a href="calculator.html">Calculator</a>
+      </div>
+      <div class="nav-cta">
+        <a class="btn btn-ghost btn-sm" href="/app">Sign in</a>
+        <a class="btn btn-primary btn-sm" href="/app">Get the app</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== CALCULATOR ========== -->
+  <div class="calc-container">
+    <div class="calc-header">
+      <h2>Peptide Reconstitution</h2>
+      <p>Calculate your exact syringe draw volume</p>
+    </div>
+
+    <div class="input-group">
+      <label for="vialSize">Peptide Content</label>
+      <div class="input-wrapper">
+        <input type="number" id="vialSize" value="5" step="1" min="1">
+        <span class="unit">mg</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="bacWater">Bacteriostatic Water Added</label>
+      <div class="input-wrapper">
+        <input type="number" id="bacWater" value="2" step="0.1" min="0.1">
+        <span class="unit">mL</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="dose">Desired Dose</label>
+      <div class="input-wrapper">
+        <input type="number" id="dose" value="250" step="10" min="10">
+        <span class="unit">mcg</span>
+      </div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-label">Pull Syringe To</div>
+      <div class="result-value" id="resultUnits">10<span style="font-size:24px; color:#00f0ff;"> Units</span></div>
+      <div class="result-subtext" id="resultVol">0.10 mL (cc) on a U-100 Syringe</div>
+    </div>
+  </div>
+
+  <script>
+    // Handle embedded mode
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('embed') === 'true') {
+      document.body.classList.add('is-embedded');
+    }
+
+    // Calculation Logic
+    const vialSizeInput = document.getElementById('vialSize');
+    const bacWaterInput = document.getElementById('bacWater');
+    const doseInput = document.getElementById('dose');
+    
+    const resultUnits = document.getElementById('resultUnits');
+    const resultVol = document.getElementById('resultVol');
+
+    function calculate() {
+      const vialMg = parseFloat(vialSizeInput.value) || 0;
+      const waterMl = parseFloat(bacWaterInput.value) || 0;
+      const doseMcg = parseFloat(doseInput.value) || 0;
+
+      if (vialMg <= 0 || waterMl <= 0 || doseMcg <= 0) {
+        resultUnits.innerHTML = '0<span style="font-size:24px; color:#00f0ff;"> Units</span>';
+        resultVol.innerText = 'Please enter valid numbers';
+        return;
+      }
+
+      // 1 mg = 1000 mcg
+      const totalMcg = vialMg * 1000;
+      // concentration = totalMcg / waterMl (mcg per mL)
+      const concentration = totalMcg / waterMl;
+      // volume needed in mL = doseMcg / concentration
+      const volumeMl = doseMcg / concentration;
+      
+      // Standard U-100 syringe: 1 mL = 100 units
+      const units = volumeMl * 100;
+
+      // Format output
+      let displayUnits = units.toFixed(1);
+      if (displayUnits.endsWith('.0')) displayUnits = displayUnits.slice(0, -2);
+      
+      resultUnits.innerHTML = displayUnits + '<span style="font-size:24px; color:#00f0ff;"> Units</span>';
+      resultVol.innerText = volumeMl.toFixed(3) + ' mL (cc) on a U-100 Syringe';
+    }
+
+    vialSizeInput.addEventListener('input', calculate);
+    bacWaterInput.addEventListener('input', calculate);
+    doseInput.addEventListener('input', calculate);
+
+    // Initial calculation
+    calculate();
+  </script>
+</body>
+</html>

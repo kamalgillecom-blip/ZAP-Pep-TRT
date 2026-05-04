@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const C = '#CDFA41'
+const C = '#C4EF95'
 
 export default function PaymentSuccess() {
   const navigate = useNavigate()

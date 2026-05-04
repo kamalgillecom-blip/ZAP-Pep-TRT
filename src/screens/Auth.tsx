@@ -8,7 +8,7 @@ import {
 import { doc, setDoc } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 
-const C = '#CDFA41'
+const C = '#C4EF95'
 
 type Screen = 'login' | 'signup' | 'verify' | 'reset'
 

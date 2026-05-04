@@ -23,6 +23,7 @@ import ExerciseLogs from './screens/ExerciseLogs'
 import Paywall from './screens/Paywall'
 import PaymentSuccess from './screens/PaymentSuccess'
 import Settings from './screens/Settings'
+import Dosages from './screens/Dosages'
 
 function AppContent() {
   const { user, loading, setUser, setLoading } = useStore()
@@ -93,6 +94,7 @@ function AppContent() {
             <Route path="/exercise" element={<ExerciseLogs />} />
             <Route path="/more" element={<More />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/dosages" element={<Dosages />} />
             <Route path="/subscribe" element={<Paywall daysLeft={subscription.daysLeft} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

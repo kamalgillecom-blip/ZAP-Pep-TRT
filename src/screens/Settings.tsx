@@ -6,7 +6,7 @@ import { auth, db } from '../firebase'
 import { useStore } from '../store/useStore'
 import { useSubscription } from '../lib/useSubscription'
 
-const C = '#CDFA41'
+const C = '#C4EF95'
 
 function Row({ icon, label, right, onPress, href }: {
   icon: React.ReactNode

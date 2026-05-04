@@ -203,7 +203,7 @@ export const BUILTIN_COMPOUNDS: Compound[] = [
 ]
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  TRT: '#CDFA41',
+  TRT: '#C4EF95',
   PEPTIDE: '#4CAF50',
   AAS: '#FF5722',
   SARM: '#FF9800',

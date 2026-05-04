@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore'
 import { format } from 'date-fns'
 import { CYAN_PRIMARY } from '../lib/theme'
 
-const C = '#CDFA41'
+const C = '#C4EF95'
 const ITEM_H = 50
 
 const CATEGORIES = ['STRENGTH', 'CARDIO', 'FLEXIBILITY', 'OTHER'] as const

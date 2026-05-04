@@ -1,5 +1,5 @@
 // Exact match to Android Color.kt
-export const CYAN_PRIMARY = '#CDFA41'
+export const CYAN_PRIMARY = '#C4EF95'
 export const CYAN_LIGHT = '#DDFB6E'
 export const CYAN_DARK = '#AADE2E'
 export const SILVER = '#C0C0C0'
@@ -18,7 +18,7 @@ export const STATUS_RED = '#FF5252'
 export const STATUS_ORANGE = '#FF9800'
 
 export const CHART_COLORS = [
-  '#CDFA41', // Lime (matches CyanPrimary)
+  '#C4EF95', // Lime (matches CyanPrimary)
   '#C0C0C0', // Silver
   '#FF6D00', // Orange
   '#00E676', // Green
@@ -44,7 +44,7 @@ export function toHexColor(color: any): string {
     const b = u & 0xFF
     return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')
   }
-  return '#CDFA41'  // fallback
+  return '#C4EF95'  // fallback
 }
 
 export function hexToRgba(hex: any, alpha: number): string {

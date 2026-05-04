@@ -41,7 +41,7 @@ export default function DoseLog() {
   const doseColor = (log: any) => {
     if (vialColors[log.compoundName]) return vialColors[log.compoundName]
     const compound = BUILTIN_COMPOUNDS.find(c => c.name === log.compoundName)
-    return compound ? '#CDFA41' : '#546E7A'
+    return compound ? '#C4EF95' : '#546E7A'
   }
 
   const filtered = doseLogs.filter(l =>
@@ -226,8 +226,8 @@ export default function DoseLog() {
                       className="px-2 py-1 rounded-full text-xs transition-colors"
                       style={{
                         background: editLog.injectionSite === s ? 'rgba(205,250,65,0.2)' : 'rgba(255,255,255,0.05)',
-                        border: `1px solid ${editLog.injectionSite === s ? '#CDFA41' : 'rgba(255,255,255,0.1)'}`,
-                        color: editLog.injectionSite === s ? '#CDFA41' : '#ADB5BD',
+                        border: `1px solid ${editLog.injectionSite === s ? '#C4EF95' : 'rgba(255,255,255,0.1)'}`,
+                        color: editLog.injectionSite === s ? '#C4EF95' : '#ADB5BD',
                       }}
                     >
                       {s}

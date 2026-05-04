@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import { auth } from '../firebase'
 
-const C = '#CDFA41'
+const C = '#C4EF95'
 const BG = '#0A0E14'
 
 const FEATURES = [

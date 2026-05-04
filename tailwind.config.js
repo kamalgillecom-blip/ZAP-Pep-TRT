@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         // Exact Android app colors
-        'cyan-primary': '#CDFA41',   // Lime/Neon Yellow-Green
+        'cyan-primary': '#C4EF95',   // Lime/Neon Yellow-Green
         'cyan-light': '#DDFB6E',
         'cyan-dark': '#AADE2E',
         'silver': '#C0C0C0',
@@ -24,7 +24,7 @@ export default {
         'status-red': '#FF5252',
         'status-orange': '#FF9800',
         // Chart palette
-        'chart-0': '#D3FD2B',
+        'chart-0': '#C4EF95',
         'chart-1': '#C0C0C0',
         'chart-2': '#FF6D00',
         'chart-3': '#00E676',

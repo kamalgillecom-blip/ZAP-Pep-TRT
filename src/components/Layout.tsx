@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 
-const C = '#CDFA41'
+const C = '#C4EF95'
 const DIM = '#546E7A'
 
 function Icon({ children, active }: { children: (color: string) => React.ReactNode; active: boolean }) {

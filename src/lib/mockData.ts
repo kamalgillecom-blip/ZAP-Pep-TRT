@@ -52,7 +52,7 @@ export const MOCK_VIALS = [
     reconstitutionDate: d(7),
     expiryDate: d(-83),
     notes: 'Night protocol — pre-bed',
-    color: '#CDFA41',   // lime
+    color: '#C4EF95',   // lime
     isMockData: true,
   },
   {

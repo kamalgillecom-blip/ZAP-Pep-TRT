@@ -55,7 +55,7 @@ export default function InstallPrompt() {
       <img src="/logo.png" alt="App icon" style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0 }} />
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ color: '#CDFA41', fontWeight: 700, fontSize: 14, margin: 0 }}>
+        <p style={{ color: '#C4EF95', fontWeight: 700, fontSize: 14, margin: 0 }}>
           Get the App
         </p>
 
@@ -75,7 +75,7 @@ export default function InstallPrompt() {
             <button
               onClick={() => { window.open(PLAY_STORE_URL, '_blank'); dismiss() }}
               style={{
-                background: '#CDFA41', color: '#0A0E14', border: 'none',
+                background: '#C4EF95', color: '#0A0E14', border: 'none',
                 borderRadius: 8, padding: '7px 16px', fontWeight: 700,
                 fontSize: 13, cursor: 'pointer',
               }}>

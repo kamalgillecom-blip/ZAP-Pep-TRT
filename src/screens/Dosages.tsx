@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-
-const C = '#C4EF95'
+import { useState } from 'react'
 
 type Protocol = {
   name: string

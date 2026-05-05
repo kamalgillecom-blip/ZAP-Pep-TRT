@@ -66,11 +66,13 @@
   </script>
 
   <!-- Preload critical assets -->
-  <link rel="preload" as="image" href="assets/phone2.png" />
+  <link rel="preload" as="image" href="assets/phone2.webp" type="image/webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <!-- Load fonts async to unblock render -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -141,17 +143,26 @@
       <div class="phones">
         <div class="phone">
           <div class="phone-screen">
-            <img src="assets/phone3.png" alt="ZAP app PR detail screen showing personal record tied to active peptide protocol" loading="eager" />
+            <picture>
+              <source srcset="assets/phone3.webp" type="image/webp" />
+              <img src="assets/phone3.png" alt="ZAP app PR detail screen showing personal record tied to active peptide protocol" loading="eager" width="530" height="1148" />
+            </picture>
           </div>
         </div>
         <div class="phone">
           <div class="phone-screen">
-            <img src="assets/phone2.png" alt="ZAP app dashboard charts showing TRT and peptide serum levels over time" loading="eager" />
+            <picture>
+              <source srcset="assets/phone2.webp" type="image/webp" />
+              <img src="assets/phone2.png" alt="ZAP app dashboard charts showing TRT and peptide serum levels over time" loading="eager" width="530" height="1148" />
+            </picture>
           </div>
         </div>
         <div class="phone">
           <div class="phone-screen">
-            <img src="assets/phone1.png" alt="ZAP app active compounds screen listing testosterone cypionate, BPC-157 and peptide doses" loading="eager" />
+            <picture>
+              <source srcset="assets/phone1.webp" type="image/webp" />
+              <img src="assets/phone1.png" alt="ZAP app active compounds screen listing testosterone cypionate, BPC-157 and peptide doses" loading="eager" width="530" height="1148" />
+            </picture>
           </div>
         </div>
       </div>
@@ -237,9 +248,18 @@
         <div class="scrollphone">
           <div class="scrollphone-frame">
             <div class="scrollphone-screen">
-              <img class="scrollphone-img" data-step="0" src="assets/scroll1.png" alt="ZAP app weekly TRT and peptide protocol view with color-coded dose timeline" loading="lazy" />
-              <img class="scrollphone-img" data-step="1" src="assets/scroll2.png" alt="ZAP app active compound serum levels updated in real time after logging a dose" loading="lazy" />
-              <img class="scrollphone-img" data-step="2" src="assets/scroll3.png" alt="ZAP app PR detail screen capturing bench press record alongside active peptide protocol" loading="lazy" />
+              <picture>
+                <source srcset="assets/scroll1.webp" type="image/webp" />
+                <img class="scrollphone-img active" data-step="0" src="assets/scroll1.png" alt="ZAP app weekly TRT and peptide protocol view with color-coded dose timeline" loading="lazy" width="708" height="1600" />
+              </picture>
+              <picture>
+                <source srcset="assets/scroll2.webp" type="image/webp" />
+                <img class="scrollphone-img" data-step="1" src="assets/scroll2.png" alt="ZAP app active compound serum levels updated in real time after logging a dose" loading="lazy" width="704" height="1600" />
+              </picture>
+              <picture>
+                <source srcset="assets/scroll3.webp" type="image/webp" />
+                <img class="scrollphone-img" data-step="2" src="assets/scroll3.png" alt="ZAP app PR detail screen capturing bench press record alongside active peptide protocol" loading="lazy" width="704" height="1600" />
+              </picture>
             </div>
           </div>
           <div class="scrollscene-counter">

@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build && cp -r landing/. dist/"
+  command = "node scripts/optimize-images.js && npm run build && cp -r landing/. dist/"
   publish = "dist"
 
 [functions]

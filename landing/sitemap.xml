@@ -85,4 +85,31 @@
     <priority>0.7</priority>
   </url>
 
+
+  <!-- Blog posts — batch 3 -->
+  <url>
+    <loc>https://zaptracker.ca/blog/tb-500-protocol.html</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zaptracker.ca/blog/trt-injection-sites.html</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zaptracker.ca/blog/trt-estradiol-guide.html</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zaptracker.ca/blog/testosterone-injection-frequency.html</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

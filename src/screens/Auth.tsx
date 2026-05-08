@@ -53,6 +53,11 @@ export default function Auth() {
       // Send verification email
       await sendEmailVerification(cred.user)
 
+      // Track signup in Google Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'sign_up', { method: 'email' })
+      }
+
       // Sign out — user must verify before they can sign in
       await auth.signOut()
 
@@ -77,6 +82,10 @@ export default function Auth() {
         await auth.signOut()
         setVerifyEmail(email)
         setScreen('verify')
+      } else {
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'login', { method: 'email' })
+        }
       }
       // If verified, onAuthStateChanged in App.tsx handles routing
     } catch (err: any) {

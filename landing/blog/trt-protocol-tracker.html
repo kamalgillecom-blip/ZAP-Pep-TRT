@@ -68,6 +68,56 @@
   }
   </script>
 
+  <!-- JSON-LD FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What should I track in a TRT injection log?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "At minimum: dose in milligrams, date and time of injection, injection site, and the ester/compound. Ideally also log lot number or vial ID, any delays or missed doses, and relevant notes. The more context you have, the more useful the log is when you're trying to interpret bloodwork results or symptoms weeks later."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does a TRT tracker help with serum level stability?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "By logging every injection with a timestamp, a TRT tracker with pharmacokinetic modeling can estimate your current serum level based on ester half-life and dose history. Consistent injection timing produces stable serum levels; a tracker with reminders reduces timing variance and therefore reduces serum level fluctuations between injections."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the half-life of testosterone cypionate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Testosterone cypionate has a half-life of approximately 8 days, meaning serum concentration from a given injection drops by half every 8 days. At steady state (reached after roughly 4–5 half-lives), most patients inject twice weekly to maintain stable serum levels and minimize peak-to-trough variation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does injection timing really affect TRT results?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, meaningfully. On a twice-weekly protocol, allowing your injection interval to drift by even 1–2 days can shift your trough testosterone by 100–200 ng/dL. Consistent timing is one of the most impactful — and most underrated — aspects of TRT protocol management. A tracking app with scheduled reminders is the simplest way to maintain it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is a dedicated TRT app better than a spreadsheet or notes app?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For most people, yes. A notes app requires you to remember to log, provides no reminders, does no calculations, and can't correlate your injection history with bloodwork or symptoms. A dedicated TRT tracking app with injection reminders, serum modeling, and lab logging integrates all of this automatically, reducing the cognitive load of managing your protocol to roughly zero."
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
@@ -96,6 +146,7 @@
         <a href="/">Home</a>
         <a href="/blog/">Blog</a>
         <a href="/calculator.html">Calculator</a>
+        <a href="/about.html">About</a>
       </div>
       <div class="nav-cta">
         <a class="btn btn-ghost btn-sm" href="/app">Sign in</a>
@@ -124,6 +175,10 @@
   <!-- ARTICLE BODY -->
   <article>
     <div class="article-body">
+
+      <div class="quick-answer">
+        <strong>Quick Answer:</strong> A TRT protocol tracker should log every injection — dose, date, time, injection site, and ester — and model your resulting serum levels using pharmacokinetic math. Without this, you're guessing at trough levels, missing adherence patterns, and losing the data your doctor actually needs.
+      </div>
 
       <p class="article-disclaimer">This content is for informational and research purposes only. Not medical advice. Consult a licensed physician before starting any hormone or peptide therapy.</p>
 
@@ -156,7 +211,7 @@
         <p>You can model testosterone cypionate pharmacokinetics to four decimal places. You just have to, you know, actually log the injections.</p>
       </blockquote>
 
-      <h2>Testosterone Cypionate Half-Life and Why Your Serum Levels Are Not a Vibe</h2>
+      <h2>How Does Testosterone Cypionate Half-Life Affect Your Serum Levels?</h2>
 
       <p><span class="kw">Testosterone cypionate serum level tracking</span> starts with understanding the pharmacokinetics of the ester. Testosterone cypionate has a half-life of approximately 8 days. This sounds simple until you work out what it means for your actual circulating levels on a twice-weekly injection schedule.</p>
 
@@ -168,7 +223,7 @@
 
       <p>When your serum levels are stable and predictable, your symptom picture becomes stable and predictable. When they're oscillating because your schedule is inconsistent, you're essentially chasing a moving target every time you try to interpret how you're feeling.</p>
 
-      <h2>Adherence Is the Boring Secret to TRT Results</h2>
+      <h2>Why Is Adherence the Biggest Factor in TRT Results?</h2>
 
       <p>Nobody wants to talk about <span class="kw">TRT adherence</span> because it's not interesting. It doesn't have a pharmaceutical name. You can't buy it online. It's just showing up on schedule and logging your doses, and it turns out this is one of the highest-leverage things you can do for your protocol outcomes.</p>
 
@@ -250,7 +305,7 @@
         <span class="brand-name"><b>ZAP</b> Peptides &amp; TRT</span>
       </div>
       <div class="footer-links">
-        <a href="/">Home</a><a href="/blog/">Blog</a><a href="/calculator.html">Calculator</a>
+        <a href="/">Home</a><a href="/blog/">Blog</a><a href="/calculator.html">Calculator</a><a href="/about.html">About</a>
       </div>
       <div class="footer-copy">© 2026 PEP/TRT. Not medical advice.</div>
     </div>

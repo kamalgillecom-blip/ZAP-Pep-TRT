@@ -65,6 +65,116 @@
   }
   </script>
 
+  <!-- JSON-LD: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "ZAP Analytics",
+    "url": "https://zaptracker.ca/",
+    "logo": "https://zaptracker.ca/assets/logo.png",
+    "description": "ZAP builds precision tracking tools for TRT and peptide protocols.",
+    "sameAs": [
+      "https://play.google.com/store/apps/details?id=com.zap.peptidetracker"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "url": "https://zaptracker.ca/app"
+    }
+  }
+  </script>
+
+  <!-- JSON-LD: WebSite with SearchAction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "ZAP Peptides & TRT",
+    "url": "https://zaptracker.ca/",
+    "description": "Precision tracking app for TRT and peptide protocols. Real-time serum modeling, dose scheduling, blood work logging, and PR tracking.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://zaptracker.ca/blog/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage (homepage) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is ZAP Peptides & TRT Tracker?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ZAP is a precision tracking app for TRT (testosterone replacement therapy) and peptide protocols. It models serum levels in real time, tracks injection schedules, logs blood work, and monitors body composition and personal records — all privately, on-device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does ZAP track testosterone serum levels?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ZAP uses pharmacokinetic modeling to calculate estimated serum levels for testosterone esters (cypionate, enanthate, propionate) and peptides in real time, updated every time you log a dose."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which peptides does ZAP support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ZAP supports tracking for BPC-157, TB-500, retatrutide, semaglutide, tirzepatide, ipamorelin, CJC-1295, GHK-Cu, and any custom compound you add. It tracks dosing schedules, vial inventory, and injection site rotation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is ZAP free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, ZAP is free to start. No account required for basic tracking. The app is available on Android via Google Play and as a web app at zaptracker.ca/app."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data private on ZAP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ZAP is private by default. Your protocol data stays on your device. There is no mandatory cloud sync, no account required, and no data sold to third parties."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the best app to track TRT injections?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ZAP is purpose-built for TRT injection tracking. It logs dose, date, time, injection site, and ester type, then models your resulting serum levels using pharmacokinetic math — something generic health apps don't do."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can ZAP track retatrutide dosing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ZAP can track any peptide including retatrutide. You can log your dose escalation schedule (2mg, 4mg, 8mg, 12mg), set injection reminders, and track weight and body composition changes correlated to each dose stage."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I track my TRT blood work over time?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ZAP includes a blood work logging feature where you can record testosterone, estradiol, hematocrit, PSA, and other key TRT labs. Results are stored with dates so you can see trends across multiple draws rather than just a single snapshot."
+        }
+      }
+    ]
+  }
+  </script>
+
   <!-- Preload critical assets -->
   <link rel="preload" as="image" href="assets/phone2.webp" type="image/webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -100,6 +210,7 @@
         <a href="#stats">Insights</a>
         <a href="calculator.html">Calculator</a>
         <a href="/blog/">Blog</a>
+        <a href="/about.html">About</a>
       </div>
       <div class="nav-cta">
         <a class="btn btn-ghost btn-sm" href="/app">Sign in</a>

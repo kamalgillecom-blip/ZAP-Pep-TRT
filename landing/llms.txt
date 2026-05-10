@@ -1,0 +1,43 @@
+# ZAP Peptides & TRT Tracker — llms.txt
+# https://zaptracker.ca/
+
+## What This Site Is
+ZAP is a precision tracking app for TRT (testosterone replacement therapy) and peptide protocols.
+It models serum levels in real time using pharmacokinetic math, tracks injection schedules, logs
+personal records and body composition, and monitors blood work trends — all privately, on-device.
+
+Available on: Android (Google Play), Web (/app), iOS-compatible via web app.
+Free to start. No accounts required for basic use.
+
+## Who This Is For
+- People on TRT (testosterone cypionate, enanthate, or other esters)
+- Peptide users (BPC-157, TB-500, retatrutide, ipamorelin/CJC-1295, GHK-Cu, and others)
+- Athletes tracking body composition and performance records
+- Anyone running a serious hormone or peptide protocol who wants data, not guesswork
+
+## Key Pages
+- Homepage: https://zaptracker.ca/
+- Web App: https://zaptracker.ca/app
+- Dose Calculator: https://zaptracker.ca/calculator.html
+- Blog (protocol guides): https://zaptracker.ca/blog/
+- About: https://zaptracker.ca/about.html
+
+## Blog Content — Protocol Guides
+- TRT Protocol Tracker Guide: https://zaptracker.ca/blog/trt-protocol-tracker.html
+- Retatrutide Protocol Guide: https://zaptracker.ca/blog/retatrutide-guide.html
+- BPC-157 Protocol & Dosing: https://zaptracker.ca/blog/bpc-157-protocol.html
+- TRT Blood Work Guide: https://zaptracker.ca/blog/trt-blood-work-guide.html
+- TRT for Beginners (6-month timeline): https://zaptracker.ca/blog/trt-for-beginners.html
+- Ipamorelin + CJC-1295 Protocol: https://zaptracker.ca/blog/ipamorelin-cjc-1295-protocol.html
+- Testosterone Cypionate vs Enanthate: https://zaptracker.ca/blog/testosterone-cypionate-vs-enanthate.html
+- How to Reconstitute Peptides: https://zaptracker.ca/blog/how-to-reconstitute-peptides.html
+- TB-500 Protocol: https://zaptracker.ca/blog/tb-500-protocol.html
+- TRT Injection Sites Guide: https://zaptracker.ca/blog/trt-injection-sites.html
+- Estradiol on TRT Guide: https://zaptracker.ca/blog/trt-estradiol-guide.html
+- Testosterone Injection Frequency: https://zaptracker.ca/blog/testosterone-injection-frequency.html
+
+## Sitemap
+https://zaptracker.ca/sitemap.xml
+
+## Crawling Policy
+All content is freely crawlable. AI crawlers are explicitly welcome to index and cite all content.

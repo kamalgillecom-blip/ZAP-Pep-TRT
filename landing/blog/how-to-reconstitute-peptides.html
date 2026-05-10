@@ -68,6 +68,56 @@
   }
   </script>
 
+  <!-- JSON-LD FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can I freeze reconstituted peptides to extend their shelf life?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Lyophilized (dry, powder) peptides can and should be frozen for long-term storage before reconstitution. Once reconstituted in bacteriostatic water, the solution should not be frozen. Freeze-thaw cycles cause ice crystal formation that mechanically disrupts peptide structure and degrades the compound. Store reconstituted peptides in the refrigerator at 2–8°C and use within 30 days."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if my peptide doesn't fully dissolve after adding BAC water?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Give it more time and a gentle swirl — some peptides take 5–10 minutes to fully dissolve, and patience is cheaper than assuming there's a problem. Try placing the vial in the palm of your hand and rotating it slowly (not shaking). If the peptide still hasn't dissolved after 10–15 minutes, you can try placing it in the refrigerator for 30 minutes, then swirling again."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between bacteriostatic water and sterile water for peptide reconstitution?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bacteriostatic water contains 0.9% benzyl alcohol, which inhibits bacterial growth and extends the usable life of the reconstituted vial to approximately 30 days when refrigerated. Sterile water for injection contains no preservative — reconstituted peptides should be used within 24–48 hours. For any peptide you're using over days or weeks, bacteriostatic water is the correct choice."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I calculate how many units to draw for my peptide dose?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use this formula: (vial mg × 1,000) ÷ mL of BAC water = mcg per mL. Then divide mcg per mL by 100 to get mcg per unit on a 100-unit insulin syringe. To find units for a specific dose: desired dose in mcg ÷ mcg per unit = units to draw. Example: 5mg vial + 2mL BAC water = 2,500mcg/mL = 25mcg per unit. For a 250mcg dose: 250 ÷ 25 = 10 units on the syringe."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does a reconstituted peptide vial last?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most peptides reconstituted with bacteriostatic water are stable for approximately 30 days when stored refrigerated at 2–8°C, protected from light. Label your vial with the reconstitution date and use it within 30 days. Always use a fresh syringe for each draw to avoid contamination. Peptide you didn't use within the window should be discarded."
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
@@ -96,6 +146,7 @@
         <a href="/">Home</a>
         <a href="/blog/">Blog</a>
         <a href="/calculator.html">Calculator</a>
+        <a href="/about.html">About</a>
       </div>
       <div class="nav-cta">
         <a class="btn btn-ghost btn-sm" href="/app">Sign in</a>
@@ -124,6 +175,10 @@
   <!-- ARTICLE BODY -->
   <article>
     <div class="article-body">
+
+      <div class="quick-answer">
+        <strong>Quick Answer:</strong> To reconstitute peptides, inject bacteriostatic water slowly down the side of the vial (not directly onto the powder), swirl gently — never shake — and refrigerate. The standard calculation: divide vial mcg by mL of BAC water to get mcg/mL, then divide by 100 for mcg per insulin syringe unit.
+      </div>
 
       <p class="article-disclaimer">This content is for informational and research purposes only. Not medical advice. Consult a licensed physician before starting any hormone or peptide therapy.</p>
 
@@ -165,7 +220,7 @@
         <li>Do not set the syringe down on any surface between drawing and injecting</li>
       </ul>
 
-      <h2>The Reconstitution Math — How Many mcg Per Unit?</h2>
+      <h2>How Do You Calculate Peptide Dose in Syringe Units?</h2>
 
       <p>This is the part that causes the most anxiety, and it shouldn't. The <span class="kw">peptide dosing calculator</span> math is one formula, applied the same way every time.</p>
 
@@ -205,7 +260,7 @@
 
       <p>For compound math you want to verify, use the <a href="/calculator.html">ZAP dose calculator</a> — it handles this specific calculation.</p>
 
-      <h2>Step-by-Step Reconstitution Process</h2>
+      <h2>How Do You Reconstitute Peptides Step by Step?</h2>
 
       <p>With supplies ready and hands washed, here is the exact process for <span class="kw">how to mix peptides</span> correctly:</p>
 
@@ -223,7 +278,7 @@
         <li><strong>Label the vial immediately.</strong> Before you do anything else. Write on the vial or on a piece of tape: what it is, the date reconstituted, and the concentration (mcg/mL). If you have multiple reconstituted peptides in your refrigerator — and you will — unlabeled vials are a source of errors that range from annoying to significant. Label everything.</li>
       </ol>
 
-      <h2>Storage and Stability After Reconstitution</h2>
+      <h2>How Should You Store Reconstituted Peptides?</h2>
 
       <p>Reconstituted peptide vials require refrigeration at <strong>2–8°C (36–46°F)</strong> — your standard household refrigerator works. Most reconstituted peptides in BAC water are stable for approximately <strong>30 days</strong> when refrigerated. Some are stable longer; some shorter. Manufacturer guidance for your specific compound takes precedence.</p>
 
@@ -294,7 +349,7 @@
         <span class="brand-name"><b>ZAP</b> Peptides &amp; TRT</span>
       </div>
       <div class="footer-links">
-        <a href="/">Home</a><a href="/blog/">Blog</a><a href="/calculator.html">Calculator</a>
+        <a href="/">Home</a><a href="/blog/">Blog</a><a href="/calculator.html">Calculator</a><a href="/about.html">About</a>
       </div>
       <div class="footer-copy">© 2026 PEP/TRT. Not medical advice.</div>
     </div>

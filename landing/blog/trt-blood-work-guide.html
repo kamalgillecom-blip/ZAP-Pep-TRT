@@ -68,6 +68,56 @@
   }
   </script>
 
+  <!-- JSON-LD FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What blood work do I need for TRT monitoring?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The core TRT blood panel should include: total testosterone, free testosterone, estradiol (sensitive assay), hematocrit and hemoglobin, PSA (for men 40+), and SHBG. A comprehensive metabolic panel and CBC are often added, especially early in treatment. At minimum, the first four are essential at every monitoring draw."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What should my testosterone level be on TRT?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most TRT practitioners target a total testosterone of 600–1,100 ng/dL, with many aiming for 700–900 as a comfortable range for most patients. The right number is highly individual — some men feel optimal at 650, others need 950. More important than the absolute number is consistency across draws taken at the same time relative to injection, and whether your symptoms align with the level."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the target estradiol range for men on TRT?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Using the sensitive estradiol assay, most men on TRT do well with estradiol in the 20–40 pg/mL range. Some men function well above this, particularly at higher testosterone doses. Symptoms are more reliable guides than the number alone — low E2 symptoms (low libido, joint pain, depression, brain fog) are common and often worse than mildly elevated E2 symptoms."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What hematocrit level is too high on TRT?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most clinicians consider hematocrit above 52–54% a threshold for intervention, with some using 52% as a conservative cutoff. Above this level, blood viscosity increases meaningfully and cardiovascular risk rises. First steps are hydration, therapeutic phlebotomy (blood donation), and reviewing injection frequency. Sustained hematocrit above 54% warrants discussion with your physician about dose adjustment."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How often should I get blood work on TRT?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Every 6–8 weeks during the first 3–6 months to establish your response and catch any early issues with hematocrit or estradiol. Once stable, every 3–6 months depending on your individual risk profile and physician guidance. After any protocol change, revert to the more frequent cadence until new stable baseline data is established."
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
@@ -96,6 +146,7 @@
         <a href="/">Home</a>
         <a href="/blog/">Blog</a>
         <a href="/calculator.html">Calculator</a>
+        <a href="/about.html">About</a>
       </div>
       <div class="nav-cta">
         <a class="btn btn-ghost btn-sm" href="/app">Sign in</a>
@@ -125,6 +176,10 @@
   <article>
     <div class="article-body">
 
+      <div class="quick-answer">
+        <strong>Quick Answer:</strong> The core TRT blood panel includes total testosterone, free testosterone, sensitive estradiol (E2), hematocrit, PSA (for men 40+), and SHBG. Draw blood at trough (just before your next injection) for consistent, comparable results. Retest every 6–8 weeks when adjusting your protocol.
+      </div>
+
       <p class="article-disclaimer">This content is for informational and research purposes only. Not medical advice. Consult a licensed physician before starting any hormone or peptide therapy.</p>
 
       <p>Here's a scene that plays out in clinics everywhere. Your doctor ordered a follow-up panel after your first three months on TRT. You got the results back through the patient portal, stared at 47 rows of numbers in font size 9, noticed that "testosterone" said 847 and "NORMAL" was in the next column, closed the app, and decided you were probably fine. Your doctor glanced at it for 90 seconds before your appointment and said "looks good" while already walking toward the door. And that was your TRT monitoring for the quarter.</p>
@@ -133,7 +188,7 @@
 
       <p>This guide covers which labs you actually need for <span class="kw">TRT monitoring</span>, what they mean, what the targets are, and why logging your lab results over time — not just reading each one in isolation — is what turns bloodwork from a compliance box into a useful tool.</p>
 
-      <h2>The Core TRT Blood Panel — What You Actually Need to Monitor</h2>
+      <h2>What Blood Tests Do You Actually Need for TRT Monitoring?</h2>
 
       <p>The question "what blood work do I need for TRT" gets more complicated answers than it should, because different physicians order different things and some are more thorough than others. Here's the minimum viable panel, and why each marker belongs on it.</p>
 
@@ -156,7 +211,7 @@
       <h3>SHBG (Sex Hormone-Binding Globulin)</h3>
       <p>SHBG binds to testosterone and renders it biologically unavailable. High SHBG means lower free testosterone for a given total testosterone. Low SHBG means more free testosterone but also faster clearance. SHBG affects how you respond to a given TRT dose and how frequently you may need to inject for stable levels. It's not monitored as frequently as the other markers, but it's useful context for interpreting total and free testosterone numbers.</p>
 
-      <h2>Estradiol Management on TRT — The Most Misunderstood Lab</h2>
+      <h2>Why Is Estradiol the Most Misunderstood TRT Lab Result?</h2>
 
       <p><span class="kw">TRT estradiol management</span> is, based on volume of forum posts alone, the single most misunderstood aspect of testosterone therapy. The prevailing folklore for a long time was that estradiol on TRT was bad, needed to be suppressed with aromatase inhibitors (AIs), and that symptoms of "high E2" were responsible for most TRT side effects. This is not accurate, and the overcorrection — crashing estradiol with excessive AI use — is significantly worse than modestly elevated estradiol.</p>
 
@@ -176,7 +231,7 @@
         <p>The most common TRT estradiol management error is not "estradiol is too high." It's "I took an AI because of a forum post and now my joints sound like a bowl of breakfast cereal."</p>
       </blockquote>
 
-      <h2>Hematocrit on TRT — When to Worry and What to Do</h2>
+      <h2>When Should You Worry About Hematocrit on TRT?</h2>
 
       <p>Elevated hematocrit is one of the most legitimate safety considerations on TRT, and it's one that actually warrants ongoing monitoring rather than dismissal. Testosterone stimulates erythropoiesis (red blood cell production), which raises hematocrit — the percentage of blood volume composed of red blood cells.</p>
 
@@ -214,7 +269,7 @@
 
       <p>One important nuance: a single data point tells you almost nothing. A trend tells you everything. Your total testosterone of 850 today means less than knowing it was 900 six months ago, 870 three months ago, and 850 today — a slight but consistent downward trend that might prompt investigation. Without the historical context, you just see 850 and "NORMAL."</p>
 
-      <h2>Logging Your TRT Labs Over Time</h2>
+      <h2>Why Should You Log Your TRT Labs Over Time?</h2>
 
       <p>This is the part that transforms blood work from a mandatory compliance activity into something actually useful for managing your protocol. The value of a <span class="kw">TRT monitoring app</span> that logs your lab results over time — not just your injections — is that it creates the trend data you need to make intelligent protocol decisions.</p>
 
@@ -288,7 +343,7 @@
         <span class="brand-name"><b>ZAP</b> Peptides &amp; TRT</span>
       </div>
       <div class="footer-links">
-        <a href="/">Home</a><a href="/blog/">Blog</a><a href="/calculator.html">Calculator</a>
+        <a href="/">Home</a><a href="/blog/">Blog</a><a href="/calculator.html">Calculator</a><a href="/about.html">About</a>
       </div>
       <div class="footer-copy">© 2026 PEP/TRT. Not medical advice.</div>
     </div>

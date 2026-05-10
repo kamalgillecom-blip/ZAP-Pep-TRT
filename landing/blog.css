@@ -516,3 +516,26 @@
     padding: 36px 20px 0;
   }
 }
+
+/* =============================================
+   QUICK ANSWER — AEO block
+   ============================================= */
+
+.quick-answer {
+  background: rgba(208,254,40,0.08);
+  border-left: 3px solid rgb(208,254,40);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 0 0 32px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.quick-answer strong {
+  color: rgb(208,254,40);
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
